@@ -1,0 +1,137 @@
+/* Estilos Gerais Minimalistas */
+:root {
+  --primary: #4a6b3a;
+  --secondary: #6b8e4a;
+  --light: #f8f8f8;
+  --dark: #222;
+  --text: #333;
+}
+
+body {
+  font-family: 'Georgia', serif;
+  background-color: var(--light);
+  color: var(--text);
+  margin: 0;
+  padding: 0;
+  line-height: 1.6;
+}
+
+/* Header Minimalista */
+header {
+  background-color: var(--primary);
+  color: white;
+  padding: 1.5rem 1rem;
+  text-align: center;
+}
+
+h1 {
+  font-family: 'Georgia', serif;
+  margin: 0;
+  font-size: 2rem;
+  font-weight: normal;
+  letter-spacing: 1px;
+}
+
+/* Container Principal Simplificado */
+.container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 1rem;
+}
+
+/* Cards de Livros Minimalistas */
+.livro {
+  background-color: white;
+  border-left: 4px solid var(--primary);
+  padding: 1.25rem;
+  margin: 1.5rem 0;
+  transition: box-shadow 0.2s ease;
+}
+
+.livro:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.livro h3 {
+  color: var(--primary);
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  font-weight: normal;
+}
+
+.livro p {
+  margin: 0.25rem 0;
+  color: var(--text);
+}
+
+.livro-info {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* Botões Simplificados */
+.btn {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background-color: var(--primary);
+  color: white;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  margin-top: 0.5rem;
+}
+
+.btn:hover {
+  opacity: 0.9;
+}
+
+/* Formulário Minimalista */
+.upload-container {
+  max-width: 500px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  background-color: white;
+}
+
+.upload-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.file-input {
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+}
+
+.file-name {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+}
+
+/* Mensagens de Status */
+.status {
+  padding: 1rem;
+  margin: 1rem 0;
+}
+
+.carregando {
+  color: var(--primary);
+}
+
+.erro {
+  color: #c33;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .container {
+    margin: 1rem;
+    padding: 1rem;
+  }
+  
+  h1 {
+    font-size: 1.5rem;
+  }
+}
