@@ -21,50 +21,65 @@ const storage = multer.diskStorage({
 
 const upload = multer({ 
     storage: storage,
-    limits: { fileSize: Infinity } // Removendo limite de tamanho
+    limits: { fileSize: 10 * 1024 * 1024 * 1024 } // Limite de 10GB
 });
 
 // Middleware para servir arquivos estáticos
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Middleware para aumentar o limite do Express (10GB)
+app.use(express.json({ limit: '10gb' }));
+app.use(express.urlencoded({ limit: '10gb', extended: true }));
 
 // Rota para a página de upload
 app.get('/upload', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'upload.html'));
 });
 
-app.use(express.json({ limit: 'Infinity' }));
-app.use(express.urlencoded({ limit: 'Infinity', extended: true }));
-
 // Rota para processar o upload
 app.post('/upload', upload.single('Livro'), (req, res) => {
-    if (!req.file) {
-        return res.status(400).send('Nenhum arquivo foi enviado.');
-    }
-
-    // Caminho do arquivo JSON dentro de public
-    const jsonPath = path.join(__dirname, 'public', 'livros.json');
-    
     try {
-        // Lê o arquivo JSON existente ou cria um novo
-        let livros = [];
-        if (fs.existsSync(jsonPath)) {
-            livros = JSON.parse(fs.readFileSync(jsonPath, 'utf-8'));
+        if (!req.file) {
+            console.error('❌ Nenhum arquivo foi enviado.');
+            return res.status(400).send('Nenhum arquivo foi enviado.');
         }
 
-        // Adiciona o novo livro ao array
-        livros.push({
-            nome: req.file.originalname,
-            caminho: `/Livros/${req.file.originalname}`, // Caminho relativo à pasta public
-            dataUpload: new Date().toISOString()
-        });
+        // Caminho do arquivo JSON dentro de public
+        const jsonPath = path.join(__dirname, 'public', 'livros.json');
+        let livros = [];
 
-        // Salva no arquivo JSON
-        fs.writeFileSync(jsonPath, JSON.stringify(livros, null, 2));
-        
+        // Tenta ler o JSON existente
+        if (fs.existsSync(jsonPath)) {
+            try {
+                const jsonData = fs.readFileSync(jsonPath, 'utf-8');
+                livros = JSON.parse(jsonData);
+            } catch (jsonErr) {
+                console.error('❌ Erro ao ler livros.json:', jsonErr);
+                return res.status(500).send('Erro ao ler o arquivo de livros.');
+            }
+        }
+
+        // Adiciona o novo livro
+        const novoLivro = {
+            nome: req.file.originalname,
+            caminho: `/Livros/${req.file.originalname}`,
+            dataUpload: new Date().toISOString()
+        };
+        livros.push(novoLivro);
+
+        // Tenta salvar no JSON
+        try {
+            fs.writeFileSync(jsonPath, JSON.stringify(livros, null, 2));
+        } catch (writeErr) {
+            console.error('❌ Erro ao salvar no JSON:', writeErr);
+            return res.status(500).send('Erro ao registrar o arquivo.');
+        }
+
+        console.log('✅ Arquivo salvo com sucesso:', novoLivro);
         res.send(`Arquivo enviado com sucesso: ${req.file.originalname}`);
     } catch (err) {
-        console.error('Erro ao salvar no JSON:', err);
-        res.status(500).send('Erro ao registrar o arquivo.');
+        console.error('❌ Erro inesperado no upload:', err);
+        res.status(500).send('Erro inesperado no servidor.');
     }
 });
 
