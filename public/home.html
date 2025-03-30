@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Biblioteca Élfica de Tanna-Toh</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header>
+    <h1>Biblioteca Élfica de Tanna-Toh</h1>
+  </header>
+
+  <div class="container">
+    <div id="status" class="status carregando">Consultando os registros ancestrais...</div>
+    <div id="livros-container"></div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const container = document.getElementById('livros-container');
+      const status = document.getElementById('status');
+      
+      try {
+        status.textContent = "Consultando os arquivos da biblioteca...";
+        
+        const response = await fetch('/livros.json');
+        
+        if (!response.ok) {
+          throw new Error(`Erro nos registros: ${response.status}`);
+        }
+        
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+          throw new Error('Os registros não estão no formato adequado');
+        }
+        
+        const livros = await response.json();
+        
+        if (livros.length === 0) {
+          status.textContent = "Os arquivos da biblioteca estão vazios.";
+          container.innerHTML = `
+            <div class="livro">
+              <h3>Biblioteca Vazia</h3>
+              <p class="livro-info">Nenhum tomo foi encontrado nos registros.</p>
+            </div>
+          `;
+          return;
+        }
+        
+        status.textContent = "";
+        exibirLivros(livros);
+        
+      } catch (error) {
+        console.error('Erro:', error);
+        status.innerHTML = "";
+        container.innerHTML = `
+          <div class="erro">
+            <h3>Erro nos Registros Arcanos</h3>
+            <p>Os tomos da biblioteca não puderam ser consultados:</p>
+            <p><em>${error.message}</em></p>
+          </div>
+        `;
+      }
+    });
+
+    function exibirLivros(livros) {
+      const container = document.getElementById('livros-container');
+      
+      livros.forEach(livro => {
+        const livroDiv = document.createElement('div');
+        livroDiv.className = 'livro';
+        
+        const nomeFormatado = livro.nome
+          .replace('.pdf', '')
+          .replace(/-/g, ' ')
+          .split(' ')
+          .map(palavra => palavra.charAt(0).toUpperCase() + palavra.slice(1))
+          .join(' ');
+        
+        const dataFormatada = new Date(livro.dataUpload).toLocaleString('pt-BR', {
+          day: '2-digit',
+          month: 'long',
+          year: 'numeric'
+        });
+        
+        livroDiv.innerHTML = `
+          <h3>Tomo: ${nomeFormatado}</h3>
+          <p class="livro-info">Adicionado ao acervo em: ${dataFormatada}</p>
+          <a href="${livro.caminho}" class="btn" target="_blank">Consultar Tomo</a>
+        `;
+        
+        container.appendChild(livroDiv);
+      });
+    }
+  </script>
+</body>
+</html>
