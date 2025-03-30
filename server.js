@@ -19,7 +19,10 @@ const storage = multer.diskStorage({
     }
 });
 
-const upload = multer({ storage: storage });
+const upload = multer({ 
+    storage: storage,
+    limits: { fileSize: Infinity } // Removendo limite de tamanho
+});
 
 // Middleware para servir arquivos estáticos
 app.use(express.static(path.join(__dirname, 'public')));
@@ -28,6 +31,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.get('/upload', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'upload.html'));
 });
+
+app.use(express.json({ limit: 'Infinity' }));
+app.use(express.urlencoded({ limit: 'Infinity', extended: true }));
 
 // Rota para processar o upload
 app.post('/upload', upload.single('Livro'), (req, res) => {
