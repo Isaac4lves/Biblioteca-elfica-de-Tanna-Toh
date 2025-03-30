@@ -68,6 +68,6 @@ app.get('/livros.json', (req, res) => {
 });
 
 // Inicia o servidor
-app.listen(5000, () => {
-    console.log('Servidor rodando na porta 5000');
+app.listen(8080, () => {
+    console.log('Servidor rodando na porta 8080');
 });
