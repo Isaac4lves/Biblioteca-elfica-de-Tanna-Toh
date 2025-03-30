@@ -8,5 +8,15 @@
     "nome": "chamado-de-cthulhu-livro-basico.pdf",
     "caminho": "/Livros/chamado-de-cthulhu-livro-basico.pdf",
     "dataUpload": "29 de março de 2025"
+  },
+  {
+    "nome": "dnd5e.pdf",
+    "caminho":"/Livros/dnd5e.pdf",
+    "dataUpload":"30 de março de 2025"
+  },
+  {
+    "nome": "Monstros do multiverso.pdf",
+    "caminho":"/Livros/Monstros do multiverso.pdf",
+    "dataUpload":"30 de março de 2025"
   }
 ]
