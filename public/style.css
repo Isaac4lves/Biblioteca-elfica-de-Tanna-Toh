@@ -11,18 +11,32 @@ header {
 }
 .livro {
   background-color: #ffffff;
-  border-left: 5px solid #4A6B3A;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-left: 8px solid #4A6B3A;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  margin-bottom: 20px;
 }
+
+.livro:hover {
+  transform: scale(1.02);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+}
+
 .livro h3 {
-  font-weight: 700;
+  font-size: 22px;
+  font-weight: bold;
   color: #4A6B3A;
+  margin-bottom: 10px;
 }
+
 .livro-info {
   color: #555;
+  font-size: 16px;
+  line-height: 1.5;
 }
+
 .btn {
   background-color: #4A6B3A;
   color: #ffffff;
