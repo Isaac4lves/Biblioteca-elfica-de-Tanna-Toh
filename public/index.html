@@ -7,10 +7,8 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEJx1o2+90+bmzDFeWVgSkD6u9aW40f6hJ3aFjQ32qrbQBXEDg6pVZjwO6Xee" crossorigin="anonymous">
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
- 
 </head>
 <body>
-
   <header>
     <h1>Grimório de Tanna-Toh</h1>
   </header>
@@ -28,8 +26,7 @@
       try {
         status.textContent = "Despertando os registros do Grimório...";
         
-        const response = await fetch('/livros.json');
-        
+        const response = await fetch('/livros.json', { cache: 'no-store' }); // Evita cache
         if (!response.ok) {
           throw new Error(`Falha na invocação: ${response.status}`);
         }
@@ -40,14 +37,18 @@
         }
         
         const tomos = await response.json();
+        console.log('Total de tomos recebidos:', tomos.length);
+        console.log('Tomos:', tomos);
         
-        if (tomos.length === 0) {
+        if (!tomos || tomos.length === 0) {
           status.textContent = "O Grimório está selado.";
           container.innerHTML = `
             <div class="col-12">
-              <div class="livro">
-                <h3>Silêncio Arcano</h3>
-                <p class="livro-info">Nenhum tomo foi inscrito no Grimório.</p>
+              <div class="livro card">
+                <div class="card-body">
+                  <h3 class="card-title">Silêncio Arcano</h3>
+                  <p class="livro-info card-text">Nenhum tomo foi inscrito no Grimório.</p>
+                </div>
               </div>
             </div>
           `;
@@ -59,23 +60,20 @@
         
       } catch (error) {
         console.error('Erro Arcano:', error);
-        status.innerHTML = "";
-        container.innerHTML = `
-          <div class="col-12">
-            <div class="alert alert-danger text-center">
-              <h3>Falha no Encantamento</h3>
-              <p>O Grimório rejeitou a consulta:</p>
-              <p><em>${error.message}</em></p>
-            </div>
-          </div>
+        status.className = 'alert alert-danger text-center mb-4';
+        status.innerHTML = `
+          <h3>Falha no Encantamento</h3>
+          <p>O Grimório rejeitou a consulta: <em>${error.message}</em></p>
         `;
       }
     });
 
     function exibirTomos(tomos) {
       const container = document.getElementById('livros-container');
+      container.innerHTML = ''; // Limpa antes de adicionar
       
-      tomos.forEach(tomo => {
+      tomos.forEach((tomo, index) => {
+        console.log(`Adicionando tomo ${index + 1}:`, tomo.nome);
         const tomoDiv = document.createElement('div');
         tomoDiv.className = 'col-md-4 col-12';
         
@@ -83,23 +81,23 @@
           .replace('.pdf', '')
           .replace(/-/g, ' ')
           .split(' ')
-          .map(palavra => palavra.charAt(0).toUpperCase() + palavra.slice(1))
+          .map(word => word.charAt(0).toUpperCase() + word.slice(1))
           .join(' ');
         
-        const dataFormatada = new Date(tomo.dataUpload).toLocaleString('pt-BR', {
-          day: '2-digit',
-          month: 'long',
-          year: 'numeric'
-        });
+        const data = new Date(tomo.dataUpload);
+        const dataFormatada = isNaN(data.getTime())
+          ? tomo.dataUpload
+          : data.toLocaleString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
         
         tomoDiv.innerHTML = `
-          <div class="livro">
-            <h3>${nomeFormatado}</h3>
-            <p class="livro-info">Gravado no Grimório em: ${dataFormatada}</p>
-            <a href="${tomo.caminho}" class="btn" target="_blank">Revelar Segredos</a>
+          <div class="livro card h-100">
+            <div class="card-body">
+              <h3 class="card-title">${nomeFormatado}</h3>
+              <p class="livro-info card-text">Gravado em: ${dataFormatada}</p>
+              <a href="${tomo.caminho}" class="btn" target="_blank">Revelar Segredos</a>
+            </div>
           </div>
         `;
-        
         container.appendChild(tomoDiv);
       });
     }
@@ -107,6 +105,5 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz4fnFO9gyb37F6kD4zr/pT4M4f2MXkWsb6d5lOjqHg54ZYjSvT7EXjkXq5" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js" integrity="sha384-pzjw8f+ua7Kw1TIq0p3zV8M4kqZ+MhmkXkpPp1y4Dsm+DYDgFqV5C6LgFwkbY0fU" crossorigin="anonymous"></script>
-
 </body>
 </html>
